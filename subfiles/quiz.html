@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title>
+<style>
+    .quiz-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+    }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+    <h1>Quiz</h1>
+    <div id="question-container">
+        <div id="question"></div>
+        <div id="options"></div>
+        <button id="prevBtn" onclick="prevQuestion()">Previous</button>
+        <button id="nextBtn" onclick="nextQuestion()">Next</button>
+        <button id="submitBtn" onclick="submitQuiz()">Submit</button>
+    </div>
+    <div id="result-container" style="display: none;">
+        <h2>Results</h2>
+        <p id="score"></p>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "What is the capital of France?",
+            options: ["Paris", "Berlin", "London", "Madrid"],
+            correctAnswer: "Paris"
+        },
+        {
+            question: "What is 2 + 2?",
+            options: ["3", "4", "5", "6"],
+            correctAnswer: "4"
+        },
+        {
+            question: "Which planet is known as the Red Planet?",
+            options: ["Earth", "Mars", "Venus", "Jupiter"],
+            correctAnswer: "Mars"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timer;
+
+    function showQuestion() {
+        const questionElem = document.getElementById("question");
+        const optionsElem = document.getElementById("options");
+        const question = questions[currentQuestion];
+        questionElem.textContent = question.question;
+        optionsElem.innerHTML = "";
+        question.options.forEach((option, index) => {
+            const optionElem = document.createElement("button");
+            optionElem.textContent = option;
+            optionElem.onclick = () => selectOption(option);
+            optionsElem.appendChild(optionElem);
+        });
+
+        document.getElementById("prevBtn").disabled = currentQuestion === 0;
+        document.getElementById("nextBtn").disabled = currentQuestion === questions.length - 1;
+        document.getElementById("submitBtn").style.display = currentQuestion === questions.length - 1 ? "block" : "none";
+    }
+
+    function selectOption(option) {
+        const question = questions[currentQuestion];
+        if (option === question.correctAnswer) {
+            score += 1;
+        } else {
+            score -= 0.25;
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        showQuestion();
+    }
+
+    function prevQuestion() {
+        currentQuestion--;
+        showQuestion();
+    }
+
+    function submitQuiz() {
+        clearInterval(timer);
+        const resultContainer = document.getElementById("result-container");
+        resultContainer.style.display = "block";
+        const scoreElem = document.getElementById("score");
+        scoreElem.textContent = `Your score is: ${score}`;
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            submitQuiz();
+        }, 1000 * 60 * 30); // 30 minutes
+    }
+
+    window.onload = () => {
+        startTimer();
+        showQuestion();
+    };
+</script>
+</body>
+</html>
